@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الكشافات الحديثية الذكية - منظومة الإدارة الشاملة V7</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1b4d3e;
+            --primary-light: #2c6e59;
+            --accent-color: #cda250;
+            --bg-color: #f7f9f6;
+            --card-bg: #ffffff;
+            --text-main: #2b2b2b;
+            --text-muted: #666666;
+            --color-sahih: #2e7d32;
+            --color-hassan: #ef6c00;
+            --color-daif: #c62828;
+            --color-muttafaq: #1565c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.8;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header h1 { font-family: 'Amiri', serif; font-size: 2.2rem; margin-bottom: 8px; }
+        .meta-info { margin-top: 10px; font-size: 0.95rem; color: var(--accent-color); font-weight: bold; }
+
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+
+        .panel {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .panel-title { font-size: 1.1rem; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        /* نموذج الإدخال والتحيين */
+        .crud-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 15px; }
+        .form-control { width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: 'Tajawal', sans-serif; font-size: 0.9rem; outline: none; }
+        .form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(27, 77, 62, 0.1); }
+        
+        .io-grid { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 15px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn:hover { background-color: var(--primary-light); }
+        .btn-accent { background-color: var(--accent-color); color: #111; font-weight: bold; }
+        .btn-danger { background-color: var(--color-daif); color: white; }
+        .btn-sm { padding: 4px 10px; font-size: 0.8rem; border-radius: 4px; }
+
+        .file-input-wrapper { position: relative; display: inline-block; }
+        .file-input-wrapper input[type="file"] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+        /* لوحة الإحصائيات المتزامنة */
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-right: 4px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            text-align: center;
+        }
+        .stat-card h3 { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; }
+        .stat-card .num { font-size: 1.6rem; font-weight: bold; color: var(--primary-color); }
+
+        /* صندوق البحث والفلترة */
+        .search-box {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+        .search-wrapper { display: flex; gap: 15px; flex-wrap: wrap; }
+        .search-input { flex: 1; min-width: 300px; padding: 12px 18px; font-size: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; font-family: 'Tajawal', sans-serif; outline: none; }
+        .filter-select { padding: 0 15px; border: 2px solid #e2e8f0; border-radius: 8px; background: white; font-family: 'Tajawal', sans-serif; min-width: 180px; cursor: pointer; }
+
+        .results-count { margin-bottom: 15px; font-weight: bold; color: var(--primary-color); }
+
+        /* قائمة البطاقات */
+        .hadith-list { display: flex; flex-direction: column; gap: 15px; }
+        .hadith-card { background: var(--card-bg); border-radius: 10px; padding: 22px; box-shadow: 0 3px 8px rgba(0,0,0,0.02); border: 1px solid #e8ede9; }
+        .hadith-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; }
+        .hadith-number { background: #eef3f0; color: var(--primary-color); padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .hadith-actions { display: flex; gap: 8px; align-items: center; }
+        .hadith-degree { padding: 3px 12px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; color: white; }
+        
+        .deg-sahih { background-color: var(--color-sahih); }
+        .deg-hassan { background-color: var(--color-hassan); }
+        .deg-daif { background-color: var(--color-daif); }
+        .deg-muttafaq { background-color: var(--color-muttafaq); }
+
+        .hadith-text { font-family: 'Amiri', serif; font-size: 1.4rem; color: var(--text-main); margin-bottom: 15px; text-align: justify; }
+        .hadith-text::before { content: "« "; color: var(--accent-color); }
+        .hadith-text::after { content: " »"; color: var(--accent-color); }
+
+        .hadith-meta-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; background: #fafbfa; padding: 12px; border-radius: 6px; font-size: 0.9rem; }
+        .meta-item strong { color: var(--primary-color); }
+        
+        .no-results { text-align: center; padding: 30px; color: var(--text-muted); background: white; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>مِنَصَّةُ الكَشَّافَاتِ الحَدِيثِيَّةِ الذَّكِيَّة</h1>
+        <p>النظام المتناسق والشامل: استيراد وتصدير وCRUD متزامن تلقائياً لكتاب المنتقى</p>
+        <div class="meta-info">ماستر الشريعة والابتكار الرقمي - معالجة قاعدة بيانات مستقرة وموحدة</div>
+    </header>
+
+    <div class="container">
+        
+        <div class="panel">
+            <div class="panel-title" id="formPanelTitle">➕ إضافة حديث جديد لقاعدة البيانات المحفوظة</div>
+            <input type="hidden" id="editHadithId">
+            <div class="crud-grid">
+                <input type="number" id="hadithIdInput" class="form-control" placeholder="رقم الحديث التسلسلي">
+                <input type="text" id="hadithTextInput" class="form-control" placeholder="نص طرف الحديث...">
+                <input type="text" id="hadithRawiInput" class="form-control" placeholder="اسم الصحابي الراوي...">
+                <input type="text" id="hadithTakhrijInput" class="form-control" placeholder="التخريج والمراجع العلمية...">
+                <select id="hadithDegreeInput" class="form-control">
+                    <option value="صحيح">صحيح</option>
+                    <option value="متفق عليه">متفق عليه</option>
+                    <option value="حسن">حسن</option>
+                    <option value="حسن صحيح">حسن صحيح</option>
+                    <option value="ضعيف">ضعيف</option>
+                    <option value="موقوف">موقوف</option>
+                </select>
+            </div>
+            <div>
+                <button class="btn btn-accent" id="saveBtn" onclick="addOrUpdateHadith()">💾 حفظ وتسجيل في قاعدة البيانات</button>
+                <button class="btn" id="cancelEditBtn" style="display:none;" onclick="cancelEdit()">إلغاء وضع التعديل</button>
+            </div>
+
+            <div class="io-grid">
+                <button class="btn" onclick="exportToJSON()">📥 تصدير الذكي (JSON)</button>
+                <button class="btn" onclick="exportToCSV()">📊 تصدير إكسل المستقر (CSV)</button>
+                <div class="file-input-wrapper">
+                    <button class="btn btn-accent">📤 استيراد ملف خارجي ومزامنة المنصة</button>
+                    <input type="file" id="importFile" accept=".json,.csv" onchange="importData(event)">
+                </div>
+                <button class="btn btn-danger" onclick="resetDatabase()">🔄 إعادة ضبط المنصة وقراءة ملف CSV الأصلي</button>
+            </div>
+        </div>
+        
+        <div class="stats-panel">
+            <div class="stat-card"><h3>إجمالي الأحاديث الحالية</h3><div class="num" id="totalCount">0</div></div>
+            <div class="stat-card" style="border-right-color: var(--color-muttafaq)"><h3>متفق عليه</h3><div class="num" id="muttafaqCount">0</div></div>
+            <div class="stat-card" style="border-right-color: var(--color-sahih)"><h3>صحيح</h3><div class="num" id="sahihCount">0</div></div>
+            <div class="stat-card" style="border-right-color: var(--color-hassan)"><h3>حسن</h3><div class="num" id="hassanCount">0</div></div>
+            <div class="stat-card" style="border-right-color: var(--color-daif)"><h3>ضعيف / موقوف</h3><div class="num" id="daifCount">0</div></div>
+        </div>
+
+        <div class="search-box">
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" class="search-input" placeholder="ابحث بطرف الحديث، أوله، الراوي، المراجع والتخريج...">
+                <select id="degreeFilter" class="filter-select">
+                    <option value="all">كل الدرجات</option>
+                    <option value="متفق عليه">متفق عليه</option>
+                    <option value="صحيح">صحيح</option>
+                    <option value="حسن">حسن</option>
+                    <option value="ضعيف">ضعيف / موقوف</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="results-count" id="resultsCount">جاري تشغيل قاعدة البيانات المتجانسة...</div>
+        <div class="hadith-list" id="hadithList"></div>
+
+    </div>
+
+    <script>
+        let hadithDatabase = [];
+        const csvFileName = "Montaqa fin.xlsx - hadith montaqa.csv";
+
+        // دالة موحدة لتفصيص محتوى ملفات الـ CSV المتوافقة مع النصوص العربية وعلامات التنصيص
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            const result = [];
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const matches = line.match(/(".*?"|[^,]+)(?=\s*,|\s*$|\n)/g);
+                if (matches && matches.length >= 4) {
+                    result.push({
+                        id: parseInt(matches[0].replace(/"/g, '')) || i,
+                        text: matches[1].replace(/"/g, '').trim(),
+                        rawi: matches[2] ? matches[2].replace(/"/g, '').trim() : "غير مذكور",
+                        takhrij: matches[3] ? matches[3].replace(/"/g, '').trim() : "غير متوفر",
+                        degree: matches[4] ? matches[4].replace(/"/g, '').trim() : "غير محدد"
+                    });
+                }
+            }
+            return result;
+        }
+
+        // تهيئة ذكية وبحث منسجم في بيئة التخزين أولاً، ثم استدعاء الملف الأصلي
+        async function initDatabase() {
+            const savedData = localStorage.getItem('muntaqa_final_db');
+            if (savedData) {
+                try {
+                    hadithDatabase = JSON.parse(savedData);
+                    syncSystem();
+                } catch(e) {
+                    loadFromOriginalCSV();
+                }
+            } else {
+                loadFromOriginalCSV();
+            }
+        }
+
+        async function loadFromOriginalCSV() {
+            try {
+                const response = await fetch(csvFileName);
+                if (!response.ok) throw new Error('CSV File NOT FOUND');
+                const text = await response.text();
+                hadithDatabase = parseCSV(text);
+                syncSystem();
+            } catch (err) {
+                document.getElementById('resultsCount').textContent = "تنبيه: يرجى التأكد من مطابقة اسم ملف الـ CSV المرفوع في المستودع بجانب index.html لتشغيل قاعدة البيانات.";
+            }
+        }
+
+        // دالة المزامنة والانسجام العام: تحفظ التحديثات، تجدد الإحصائيات، وتُعيد رندرة واجهة الاستخدام
+        function syncSystem() {
+            localStorage.setItem('muntaqa_final_db', JSON.stringify(hadithDatabase));
+            updateStats();
+            render();
+        }
+
+        function normalizeArabic(text) {
+            if (!text) return "";
+            return text.toString()
+                .replace(/[\u064B-\u065F]/g, "")
+                .replace(/[أإآ]/g, "ا")
+                .replace(/ة/g, "ه")
+                .replace(/ى/g, "ي")
+                .trim();
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = hadithDatabase.length;
+            document.getElementById('muttafaqCount').textContent = hadithDatabase.filter(h => h.degree.includes('متفق')).length;
+            document.getElementById('sahihCount').textContent = hadithDatabase.filter(h => h.degree.includes('صحيح')).length;
+            document.getElementById('hassanCount').textContent = hadithDatabase.filter(h => h.degree.includes('حسن')).length;
+            document.getElementById('daifCount').textContent = hadithDatabase.filter(h => h.degree.includes('ضعيف') || h.degree.includes('موقوف')).length;
+        }
+
+        function getDegreeClass(degree) {
+            if (degree.includes('متفق')) return 'deg-muttafaq';
+            if (degree.includes('صحيح')) return 'deg-sahih';
+            if (degree.includes('حسن')) return 'deg-hassan';
+            return 'deg-daif';
+        }
+
+        function render() {
+            const query = normalizeArabic(document.getElementById('searchInput').value);
+            const filterValue = document.getElementById('degreeFilter').value;
+
+            const filtered = hadithDatabase.filter(h => {
+                const matchesSearch = normalizeArabic(h.text).includes(query) || normalizeArabic(h.rawi).includes(query) || normalizeArabic(h.takhrij).includes(query);
+                let matchesFilter = (filterValue === 'all') || 
+                                (filterValue === 'ضعيف' && (h.degree.includes('ضعيف') || h.degree.includes('موقوف'))) ||
+                                (h.degree.includes(filterValue));
+                return matchesSearch && matchesFilter;
+            });
+
+            document.getElementById('resultsCount').textContent = `انسجام تام: تم مزامنة وعرض ${filtered.length} حديثاً من قاعدة التخزين الفورية.`;
+
+            if(filtered.length === 0) {
+                document.getElementById('hadithList').innerHTML = `<div class="no-results">لم نجد نتائج مطابقة لعمليات البحث والتحيين في قاعدة البيانات الحالية.</div>`;
+                return;
+            }
+
+            // عرض أول 150 حديثاً لأداء متصفح سريع مع إتاحة البحث الكامل في الخلفية
+            const targetDisplay = filtered.slice(0, 150);
+
+            document.getElementById('hadithList').innerHTML = targetDisplay.map(h => `
+                <div class="hadith-card">
+                    <div class="hadith-header">
+                        <span class="hadith-number">رقم الحديث التسلسلي: ${h.id}</span>
+                        <div class="hadith-actions">
+                            <button class="btn btn-sm" onclick="startEdit(${h.id})">📝 تعديل وتحيين</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteHadith(${h.id})">❌ حذف</button>
+                            <span class="hadith-degree ${getDegreeClass(h.degree)}">${h.degree}</span>
+                        </div>
+                    </div>
+                    <div class="hadith-text">${h.text}</div>
+                    <div class="hadith-meta-row">
+                        <div class="meta-item"><strong>الصحابي الراوي:</strong> ${h.rawi}</div>
+                        <div class="meta-item"><strong>التخريج والمراجع:</strong> ${h.takhrij}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ================= منظومة CRUD (التحيين والتسجيل المنسجم) =================
+
+        function addOrUpdateHadith() {
+            const idInput = document.getElementById('hadithIdInput').value.trim();
+            const textInput = document.getElementById('hadithTextInput').value.trim();
+            const rawiInput = document.getElementById('hadithRawiInput').value.trim();
+            const takhrijInput = document.getElementById('hadithTakhrijInput').value.trim();
+            const degreeInput = document.getElementById('hadithDegreeInput').value;
+            const editId = document.getElementById('editHadithId').value;
+
+            if(!idInput || !textInput) {
+                alert('يرجى ملء رقم الحديث ونص طرف الحديث النبوي على الأقل لتسجيله!');
+                return;
+            }
+
+            const hadithId = parseInt(idInput);
+
+            if(editId) {
+                // وضعية التعديل والتحيين الشامل
+                const index = hadithDatabase.findIndex(h => h.id === parseInt(editId));
+                if(index !== -1) {
+                    hadithDatabase[index] = { id: hadithId, text: textInput, rawi: rawiInput, takhrij: takhrijInput, degree: degreeInput };
+                    alert('تم تحيين وتحديث الحديث بنجاح في قاعدة البيانات!');
+                }
+                cancelEdit();
+            } else {
+                // وضعية إضافة حديث جديد تماماً مع فحص تطابق الرقم
+                if(hadithDatabase.some(h => h.id === hadithId)) {
+                    alert('خطأ: رقم الحديث هذا مسجل مسبقاً! استخدم رقماً فريداً أو قم بالبحث عن الحديث وتعديله.');
+                    return;
+                }
+                hadithDatabase.unshift({ id: hadithId, text: textInput, rawi: rawiInput, takhrij: takhrijInput, degree: degreeInput });
+                clearForm();
+                alert('تم تسجيل الحديث الجديد بنجاح في قاعدة البيانات المحفوظة!');
+            }
+
+            syncSystem(); // الحفظ والمزامنة والتحديث الفوري المتناسق
+        }
+
+        function startEdit(id) {
+            const hadith = hadithDatabase.find(h => h.id === id);
+            if(!hadith) return;
+
+            document.getElementById('editHadithId').value = id;
+            document.getElementById('hadithIdInput').value = hadith.id;
+            document.getElementById('hadithTextInput').value = hadith.text;
+            document.getElementById('hadithRawiInput').value = hadith.rawi;
+            document.getElementById('hadithTakhrijInput').value = hadith.takhrij;
+            document.getElementById('hadithDegreeInput').value = hadith.degree;
+
+            document.getElementById('formPanelTitle').textContent = "📝 وضع تحيين وتحديث الحديث الحالي";
+            document.getElementById('saveBtn').textContent = "📝 تحديث وتسجيل التعديلات الحالية";
+            document.getElementById('cancelEditBtn').style.display = "inline-block";
+            
+            window.scrollTo({ top: 150, behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            document.getElementById('editHadithId').value = "";
+            clearForm();
+            document.getElementById('formPanelTitle').textContent = "➕ إضافة حديث جديد لقاعدة البيانات المحفوظة";
+            document.getElementById('saveBtn').textContent = "💾 حفظ وتسجيل في قاعدة البيانات";
+            document.getElementById('cancelEditBtn').style.display = "none";
+        }
+
+        function deleteHadith(id) {
+            if(confirm('هل أنت متأكد من رغبتك في حذف هذا الحديث من قاعدة التخزين نهائياً؟')) {
+                hadithDatabase = hadithDatabase.filter(h => h.id !== id);
+                syncSystem();
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('hadithIdInput').value = "";
+            document.getElementById('hadithTextInput').value = "";
+            document.getElementById('hadithRawiInput').value = "";
+            document.getElementById('hadithTakhrijInput').value = "";
+        }
+
+        // ================= منظومة الاستيراد والتصدير المنسجمة بالكامل =================
+
+        function exportToJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(hadithDatabase, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", "muntaqa_perfect_sync_db.json");
+            dlAnchor.click();
+        }
+
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+            csvContent += "رقم الحديث,طرف الحديث,اسم الصحابي الراوي,تخريج الحديث,درجة الحديث\n";
+            hadithDatabase.forEach(h => {
+                csvContent += `${h.id},"${h.text.replace(/"/g, '""')}","${h.rawi.replace(/"/g, '""')}","${h.takhrij.replace(/"/g, '""')}","${h.degree}"\n`;
+            });
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", encodeURI(csvContent));
+            dlAnchor.setAttribute("download", "muntaqa_perfect_sync_excel.csv");
+            dlAnchor.click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let importedData = [];
+                    if (file.name.endsWith('.json')) {
+                        importedData = JSON.parse(e.target.result);
+                    } else {
+                        importedData = parseCSV(e.target.result);
+                    }
+                    
+                    if (Array.isArray(importedData) && importedData.length > 0) {
+                        hadithDatabase = importedData;
+                        syncSystem(); // حفظ التحيينات المستوردة فوراً بانسجام داخل الـ LocalStorage
+                        alert(`تم استيراد الملف الخارجي بنجاح! تم قراءة وتسجيل ${importedData.length} حديثاً بالمنصة.`);
+                    } else {
+                        alert('تنبيه: بنية الملف فارغة أو غير مدعومة.');
+                    }
+                } catch (err) { alert('خطأ في معالجة وتحليل بنية الملف المستورد.'); }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetDatabase() {
+            if(confirm('هل أنت متأكد من رغبتك في مسح كل التعديلات الحالية والرجوع لنسخة ملف الـ CSV الأصلية؟')) {
+                localStorage.removeItem('muntaqa_final_db');
+                loadFromOriginalCSV();
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', render);
+        document.getElementById('degreeFilter').addEventListener('change', render);
+        
+        window.onload = initDatabase;
+    </script>
+</body>
+</html>
